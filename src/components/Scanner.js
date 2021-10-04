@@ -3,10 +3,14 @@ import { Text, View, StyleSheet, Button } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import { useRestaurant } from "../context/RestaurantProvider";
 import { Camera } from 'expo-camera';
-export default function scanner(props) {
+import { useNavigation } from '@react-navigation/native';
+
+export default function scanner() {
+
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const {setRestaurantCode}  = useRestaurant();
+  const navigation = useNavigation()
 
   useEffect(() => {
     (async () => {
@@ -34,8 +38,9 @@ export default function scanner(props) {
         style={StyleSheet.absoluteFillObject}
         ratio='16:9'
       >
-        <Text style={styles.description}>Scan your QR code</Text>
+        <Text style={styles.description}> Aponte a Camera para o QRCODE</Text>
       </Camera>
+      <Button title={'Digitar Código do Restaurante'} onPress={() => navigation.navigate('restaurantCode')} />
       {scanned && <Button title={'Scannear novamente'} onPress={() => setScanned(false)} />}
     </View>
   );
