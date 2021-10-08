@@ -4,12 +4,13 @@ import { useRestaurant } from "./context/RestaurantProvider";
 import { useUser } from './context/UserProvider';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./pages/home/Index";
-import Carrinho from "./pages/cardapio/Index";
-import Cardapio from "./pages/cardapio/Index";
+import Carrinho from './pages/carrinho/Index'
+import Cardapio from './pages/cardapio/Index';
 import QRcode from "./pages/qrCode/Index";
 import restaurantCodeComponent from './pages/restaurantCode/Index';
 import ModalScanner from './components/ModalScanner';
 import Nome from './components/Nome';
+import { useCart } from "./context/CartProvider";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -18,6 +19,7 @@ export default function Routes() {
 
     const { restaurantCode } = useRestaurant();
     const { user } = useUser();
+    const { cart }  = useCart()
 
     if (!restaurantCode || !user.name) {
         return (
@@ -34,7 +36,7 @@ export default function Routes() {
     return (
         <Tab.Navigator>
             <Tab.Screen name="Cardapio" component={Cardapio} />
-            <Tab.Screen name="Carrinho" component={Carrinho} />
+            <Tab.Screen name="Carrinho" component={Carrinho} options={{ tabBarBadge: Object.keys(cart).length || 0} } />
         </Tab.Navigator>
     )
 }

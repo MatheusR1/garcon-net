@@ -9,9 +9,9 @@ export default function restaurantCode({ navigation }) {
 
     useEffect(() => {
         navigation.addListener('beforeRemove', e => {
-          if (e.data.action.type ==='GO_BACK') e.preventDefault(); 
+            if (e.data.action.type === 'GO_BACK') e.preventDefault();
         });
-     }, [navigation])
+    }, [navigation])
 
     return (
         <View>
