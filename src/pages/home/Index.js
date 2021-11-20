@@ -1,13 +1,13 @@
 import React from "react";
-import { Text , View , Button, StyleSheet} from "react-native";
+import { Text , View , Button, StyleSheet, Image} from "react-native";
 
 export default function Home ({navigation}) {
 
     return (
         <View style={styles.container} >
-            <Text> hello home </Text>
-            <Button title="Informe seu nome" onPress={() => navigation.navigate('Nome')}></Button>
-            <Button title="acesse o restaurante" onPress={() => navigation.navigate('ModalScanner')}></Button>
+            <Image source={require('../../../assets/logo.png')} />
+            <Text style={styles.title}> Bem vindo ao Garçon.NET </Text>
+            <Button title="Acessar Restaurante" onPress={() => navigation.navigate('Nome')}></Button>
         </View>
     )
 }
@@ -18,5 +18,10 @@ const styles = StyleSheet.create({
         backgroundColor : "#fff",
         alignItems:"center",
         justifyContent: "space-around"
+    },
+    title :  {
+      color: '#6C63FF',
+      fontWeight : 'bold',
+      fontSize : 20
     }
 })

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, FlatList } from "react-native";
+import { ActivityIndicator, Text, View, FlatList } from "react-native";
 import api from '../../services/api';
 import { Card, Button, Icon, SearchBar } from "react-native-elements";
 import { useCart } from '../../context/CartProvider';
@@ -9,26 +9,41 @@ export default function Cardapio() {
     const [menu, setMenu] = useState();
     const { addCart } = useCart();
     const [search, setSearch] = useState();
+    const [show, setShow] = useState(true);
+    const [oldMenu, setoldMenu] = useState();
 
     useEffect(() => {
         try {
             getCardapio();
         } catch (error) {
             console.log(error)
+            alert('algo deu errado!')
         }
     }, []);
 
     const getCardapio = async () => {
         const response = await api.get('/menu');
         let produtos = response.data?.produtos;
+        setShow(false)
         setMenu(produtos);
+        setoldMenu(produtos);
     };
 
-    const searchProduto = async (value) => {
+    const searchProduto = (value) => {
         setSearch(value)
-        const response = await api.get(`/menu?produtos.nome=${search}`);
-        let produtos = response.data;
-        console.log('asoidjasoijasd',produtos)
+        setShow(true)
+
+        let newMenu = menu.filter(item => {
+            return item.nome.includes(value.toLowerCase())
+        });
+
+        if ((newMenu.length === 0) || (value.length === 0)) {
+            setMenu(oldMenu);
+            setShow(false);
+            return;
+        }
+        setShow(false)
+        setMenu(newMenu)
     }
 
     const cards = (produto) => {
@@ -45,7 +60,7 @@ export default function Cardapio() {
             </Card>
         )
     }
-
+    
     return (
         <View>
             <SearchBar
@@ -53,6 +68,7 @@ export default function Cardapio() {
                 value={search}
                 placeholder="procure um produto"
             />
+            {show && <ActivityIndicator size="large" color="#0000ff" />}
             <FlatList
                 contentContainerStyle={{ paddingBottom: 100 }}
                 keyExtracto={item => item.id}

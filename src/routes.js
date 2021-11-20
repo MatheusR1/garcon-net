@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useState, useEffect} from 'react';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useRestaurant } from "./context/RestaurantProvider";
 import { useUser } from './context/UserProvider';
@@ -19,9 +19,16 @@ export default function Routes() {
 
     const { restaurantCode } = useRestaurant();
     const { user } = useUser();
-    const { cart }  = useCart()
+    const { cart }  = useCart();
 
-    if (!restaurantCode || !user.name) {
+    const [valid, setvalid] = useState(false)
+
+    useEffect(() => {
+        user.nome !== null && restaurantCode !== false ? setvalid(true) : setvalid(false)
+    }, [user, restaurantCode])
+
+
+    if (!valid){
         return (
             <Stack.Navigator >
                 <Stack.Screen name="Home" component={Home} />

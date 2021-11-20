@@ -40,12 +40,13 @@ export default function Carrinho() {
 
     return (
         <View>
+            <Text> total : {total || 0} </Text>
             <FlatList
+                contentContainerStyle={{ paddingBottom: 90 }}
                 keyExtracto={item => item.id}
                 data={cart}
                 renderItem={({ item }) => cards(item)}
             />
-            <Text> total : {total || 0 } </Text>
         </View>
     )
 }
