@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext } from "react";
 
 const UserContext = createContext();
 
-export default function RestaurantProvider({ children }) {
+export default function TableProvider({ children }) {
 
     const userDefault  =  {
         userId: null,

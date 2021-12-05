@@ -20,7 +20,7 @@ export default function Carrinho() {
 
     const cards = (produto) => {
         return (
-            <Card>
+            <Card >
                 <Card.Title>{produto.nome}</Card.Title>
                 <Card.Divider />
                 <Text style={{ marginBottom: 10 }}> preco: R$ {produto.preco}  quantidade : {produto.quantidade}</Text>
