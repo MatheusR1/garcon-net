@@ -20,7 +20,7 @@ export default function Carrinho() {
 
     const cards = (produto) => {
         return (
-            <Card>
+            <Card >
                 <Card.Title>{produto.nome}</Card.Title>
                 <Card.Divider />
                 <Text style={{ marginBottom: 10 }}> preco: R$ {produto.preco}  quantidade : {produto.quantidade}</Text>
@@ -40,12 +40,13 @@ export default function Carrinho() {
 
     return (
         <View>
+            <Text> total : {total || 0} </Text>
             <FlatList
+                contentContainerStyle={{ paddingBottom: 90 }}
                 keyExtracto={item => item.id}
                 data={cart}
                 renderItem={({ item }) => cards(item)}
             />
-            <Text> total : {total || 0 } </Text>
         </View>
     )
 }
