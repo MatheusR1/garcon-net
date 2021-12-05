@@ -3,7 +3,7 @@ import { ActivityIndicator, View, FlatList, RefreshControl } from "react-native"
 import api from '../../services/api';
 import { useCart } from '../../context/CartProvider';
 import { Searchbar } from 'react-native-paper';
-import { Card, Paragraph, Title, Button, Divider } from 'react-native-paper';
+import { Card, Paragraph, Title, Button, Divider, Caption } from 'react-native-paper';
 
 export default function Cardapio() {
 
@@ -27,8 +27,8 @@ export default function Cardapio() {
     }, []);
 
     const getCardapio = async () => {
-        const response = await api.get('/menu');
-        let produtos = response.data?.produtos;
+        const response = await api.get('/products.json');
+        let produtos = response?.data;
         setMenu(produtos);
         setoldMenu(produtos);
         setShow(false)
@@ -55,8 +55,9 @@ export default function Cardapio() {
         return (
             <Card style={{ marginBottom: 10 }}>
                 <Card.Content>
-                    <Title>{produto.nome}</Title>
-                    <Paragraph> preco: R$ {produto.preco}</Paragraph>
+                    <Title>{produto.name}</Title>
+                    <Paragraph> R$ {produto.price}</Paragraph>
+                    <Caption> {produto.description}</Caption>
                 </Card.Content>
                 <Card.Actions>
                     <Button onPress={() => addCart(produto)}>
@@ -76,8 +77,9 @@ export default function Cardapio() {
                 value={search}
                 placeholder="procure um produto"
             />
-            {show && <ActivityIndicator size="large" color="#0000ff" style={{marginTop: 12 }} />}
-            <FlatList
+            {show && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 12 }} />}
+
+            {menu ? <FlatList
                 contentContainerStyle={{ paddingBottom: 100, marginTop: 5 }}
                 keyExtracto={item => item.id}
                 data={menu}
@@ -86,6 +88,8 @@ export default function Cardapio() {
                     <RefreshControl refreshing={refreshing} onRefresh={getCardapio} />
                 }
             />
+                : <Text> Nada encontrado! </Text>
+            }
         </View>
     )
 }
