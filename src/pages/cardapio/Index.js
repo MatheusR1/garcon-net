@@ -1,51 +1,95 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, FlatList } from "react-native";
+import { ActivityIndicator, View, FlatList, RefreshControl } from "react-native";
 import api from '../../services/api';
-import { Card, Button, Icon } from "react-native-elements";
-import {useCart} from '../../context/CartProvider';
+import { useCart } from '../../context/CartProvider';
+import { Searchbar } from 'react-native-paper';
+import { Card, Paragraph, Title, Button, Divider, Caption } from 'react-native-paper';
 
 export default function Cardapio() {
 
-    const [menu, setMenu] = useState();
-    const {addCart} = useCart();
+    const [menu, setMenu] = useState([]);
+    const { addCart } = useCart();
+    const [search, setSearch] = useState();
+    const [show, setShow] = useState(true);
+    const [oldMenu, setoldMenu] = useState();
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         try {
             getCardapio();
+            setRefreshing(false);
         } catch (error) {
             console.log(error)
+            alert('algo deu errado!');
+            setRefreshing(false);
+            setShow(false)
         }
-    },[]);
+    }, []);
 
     const getCardapio = async () => {
-        const response = await api.get('/menu');
-        let produtos = response.data?.produtos;
+        const response = await api.get('/products.json');
+        let produtos = response?.data;
         setMenu(produtos);
+        setoldMenu(produtos);
+        setShow(false)
     };
-    
+
+    const searchProduto = (value) => {
+        setSearch(value);
+        setShow(true);
+
+        let newMenu = menu.filter(item => {
+            return item.nome.includes(value.toLowerCase());
+        });
+
+        if ((newMenu.length === 0) || (value.length === 0)) {
+            setMenu(oldMenu);
+            setShow(false);
+            return;
+        }
+        setShow(false);
+        setMenu(newMenu);
+    }
+
     const cards = (produto) => {
         return (
-            <Card>
-                <Card.Title>{produto.nome}</Card.Title>
-                <Card.Divider />
-                <Text style={{ marginBottom: 10 }}> preco: R$ {produto.preco} </Text>
-                <Button
-                    icon={<Icon type='font-awesome' name='plus' color='#ffffff' />}
-                    buttonStyle={{ borderRadius: 0, marginLeft: 0, marginRight: 0, marginBottom: 0 }}
-                    onPress = {()=>addCart(produto)}
-                />
+            <Card style={{ marginBottom: 10 }}>
+                <Card.Content>
+                    <Title>{produto.name}</Title>
+                    <Paragraph> R$ {produto.price}</Paragraph>
+                    <Caption> {produto.description}</Caption>
+                </Card.Content>
+                <Card.Actions>
+                    <Button onPress={() => addCart(produto)}>
+                        adicionar
+                    </Button>
+                </Card.Actions>
+                <Divider />
             </Card>
         )
     }
 
     return (
         <View>
-            <Text> hello cardapio </Text>
-            <FlatList
+            <Searchbar
+                style={{ padding: 2 }}
+                onChangeText={(value) => searchProduto(value)}
+                value={search}
+                placeholder="procure um produto"
+            />
+            {show && <ActivityIndicator size="large" color="#0000ff" style={{ marginTop: 12 }} />}
+
+            {menu ? <FlatList
+                contentContainerStyle={{ paddingBottom: 100, marginTop: 5 }}
                 keyExtracto={item => item.id}
                 data={menu}
                 renderItem={({ item }) => cards(item)}
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={getCardapio} />
+                }
             />
+                : <Text> Nada encontrado! </Text>
+            }
         </View>
     )
 }
